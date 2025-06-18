@@ -1388,7 +1388,7 @@ const BillingSoftware = () => {
   );
 
   const HomeScreen = () => (
-    <div className="flex-1 bg-gray-50">
+    <div className="flex-1 bg-gray-50 flex flex-col">
       {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="flex items-center justify-between p-4">
@@ -1442,13 +1442,20 @@ const BillingSoftware = () => {
         </div>
       )}
 
-      {/* Tab Navigation */}
-      <div className="px-2 sm:px-4 mb-6">
-        <div className="flex space-x-2 overflow-x-auto scrollbar-hide">
+      {/* Tab Navigation with proper spacing */}
+      <div className="px-2 sm:px-4 mt-4 mb-6">
+        <div className="flex justify-center space-x-4 overflow-x-auto scrollbar-hide">
           {['Parties', 'Transactions', 'Items'].map((tab) => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => {
+                setActiveTab(tab);
+                if (tab === 'Transactions') {
+                  showAlertMessage('Transactions view opened');
+                } else if (tab === 'Items') {
+                  handleNavigation('items');
+                }
+              }}
               className={`flex-shrink-0 px-4 sm:px-6 py-3 rounded-full font-medium transition-colors text-sm ${
                 activeTab === tab
                   ? 'bg-pink-100 text-pink-600 border-2 border-pink-300'
@@ -1461,54 +1468,127 @@ const BillingSoftware = () => {
         </div>
       </div>
 
-      {/* New Party Button */}
-      <div className="px-2 sm:px-4 mb-6">
-        <button 
-          onClick={() => openModal('customer')}
-          className="bg-blue-100 text-blue-600 px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-200 transition-colors text-sm"
-        >
-          <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
-          <span className="font-medium">New Party</span>
-        </button>
+      {/* Content based on active tab */}
+      <div className="flex-1 flex flex-col">
+        {activeTab === 'Parties' && (
+          <>
+            {/* New Party Button */}
+            <div className="px-2 sm:px-4 mb-6">
+              <button 
+                onClick={() => openModal('customer')}
+                className="bg-blue-100 text-blue-600 px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-200 transition-colors text-sm"
+              >
+                <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="font-medium">New Party</span>
+              </button>
+            </div>
+
+            {/* Add Parties Section */}
+            <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8">
+              <div className="flex space-x-2 sm:space-x-4 mb-4 sm:mb-6">
+                <div className="bg-teal-100 p-3 sm:p-4 rounded-lg">
+                  <Users className="h-6 w-6 sm:h-8 sm:w-8 text-teal-600" />
+                </div>
+                <div className="bg-teal-200 p-2 rounded-lg">
+                  <div className="h-3 sm:h-4 bg-teal-400 rounded w-12 sm:w-16 mb-1"></div>
+                  <div className="h-2 sm:h-3 bg-teal-300 rounded w-8 sm:w-12"></div>
+                </div>
+              </div>
+              <div className="flex space-x-2 sm:space-x-4 mb-6 sm:mb-8">
+                <div className="bg-yellow-100 p-3 sm:p-4 rounded-lg">
+                  <Users className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-600" />
+                </div>
+                <div className="bg-yellow-200 p-2 rounded-lg">
+                  <div className="h-3 sm:h-4 bg-yellow-400 rounded w-12 sm:w-16 mb-1"></div>
+                  <div className="h-2 sm:h-3 bg-yellow-300 rounded w-8 sm:w-12"></div>
+                </div>
+                <div className="bg-red-100 p-3 sm:p-4 rounded-lg">
+                  <Users className="h-6 w-6 sm:h-8 sm:w-8 text-red-600" />
+                </div>
+                <div className="bg-red-200 p-2 rounded-lg">
+                  <div className="h-3 sm:h-4 bg-red-400 rounded w-12 sm:w-16 mb-1"></div>
+                  <div className="h-2 sm:h-3 bg-red-300 rounded w-8 sm:w-12"></div>
+                </div>
+              </div>
+              
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Add Parties</h2>
+              <p className="text-gray-500 text-center mb-6 sm:mb-8 text-sm sm:text-base">
+                Add customers (parties) of<br />
+                your business
+              </p>
+            </div>
+          </>
+        )}
+
+        {activeTab === 'Transactions' && (
+          <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8">
+            <div className="text-center">
+              <div className="bg-green-100 rounded-full p-6 w-24 h-24 flex items-center justify-center mx-auto mb-4">
+                <Receipt className="h-12 w-12 text-green-600" />
+              </div>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Transactions</h2>
+              <p className="text-gray-500 text-center mb-6 text-sm sm:text-base">
+                View and manage all your<br />
+                business transactions
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md">
+                <button 
+                  onClick={() => handleNavigation('dashboard')}
+                  className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow text-left"
+                >
+                  <BarChart3 className="h-8 w-8 text-blue-600 mb-2" />
+                  <div className="font-medium text-gray-900">View Dashboard</div>
+                  <div className="text-sm text-gray-500">Sales & analytics</div>
+                </button>
+                <button 
+                  onClick={() => openModal('invoice')}
+                  className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow text-left"
+                >
+                  <Plus className="h-8 w-8 text-green-600 mb-2" />
+                  <div className="font-medium text-gray-900">New Transaction</div>
+                  <div className="text-sm text-gray-500">Create invoice</div>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'Items' && (
+          <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8">
+            <div className="text-center">
+              <div className="bg-purple-100 rounded-full p-6 w-24 h-24 flex items-center justify-center mx-auto mb-4">
+                <Package className="h-12 w-12 text-purple-600" />
+              </div>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Items & Inventory</h2>
+              <p className="text-gray-500 text-center mb-6 text-sm sm:text-base">
+                Manage your products and<br />
+                inventory stock
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md">
+                <button 
+                  onClick={() => handleNavigation('items')}
+                  className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow text-left"
+                >
+                  <List className="h-8 w-8 text-purple-600 mb-2" />
+                  <div className="font-medium text-gray-900">View Products</div>
+                  <div className="text-sm text-gray-500">Manage inventory</div>
+                </button>
+                <button 
+                  onClick={() => openModal('product')}
+                  className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow text-left"
+                >
+                  <Plus className="h-8 w-8 text-blue-600 mb-2" />
+                  <div className="font-medium text-gray-900">Add Product</div>
+                  <div className="text-sm text-gray-500">New item</div>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Add Parties Section */}
-      <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8">
-        <div className="flex space-x-2 sm:space-x-4 mb-4 sm:mb-6">
-          <div className="bg-teal-100 p-3 sm:p-4 rounded-lg">
-            <Users className="h-6 w-6 sm:h-8 sm:w-8 text-teal-600" />
-          </div>
-          <div className="bg-teal-200 p-2 rounded-lg">
-            <div className="h-3 sm:h-4 bg-teal-400 rounded w-12 sm:w-16 mb-1"></div>
-            <div className="h-2 sm:h-3 bg-teal-300 rounded w-8 sm:w-12"></div>
-          </div>
-        </div>
-        <div className="flex space-x-2 sm:space-x-4 mb-6 sm:mb-8">
-          <div className="bg-yellow-100 p-3 sm:p-4 rounded-lg">
-            <Users className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-600" />
-          </div>
-          <div className="bg-yellow-200 p-2 rounded-lg">
-            <div className="h-3 sm:h-4 bg-yellow-400 rounded w-12 sm:w-16 mb-1"></div>
-            <div className="h-2 sm:h-3 bg-yellow-300 rounded w-8 sm:w-12"></div>
-          </div>
-          <div className="bg-red-100 p-3 sm:p-4 rounded-lg">
-            <Users className="h-6 w-6 sm:h-8 sm:w-8 text-red-600" />
-          </div>
-          <div className="bg-red-200 p-2 rounded-lg">
-            <div className="h-3 sm:h-4 bg-red-400 rounded w-12 sm:w-16 mb-1"></div>
-            <div className="h-2 sm:h-3 bg-red-300 rounded w-8 sm:w-12"></div>
-          </div>
-        </div>
-        
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Add Parties</h2>
-        <p className="text-gray-500 text-center mb-6 sm:mb-8 text-sm sm:text-base">
-          Add customers (parties) of<br />
-          your business
-        </p>
-      </div>
-
-      {/* Bottom Action Buttons */}
-      <div className="bg-white border-t border-gray-200 p-3 sm:p-4">
+      {/* Bottom Action Buttons - Fixed at bottom */}
+      <div className="bg-white border-t border-gray-200 p-3 sm:p-4 mt-auto">
         <div className="flex items-center justify-between space-x-2 sm:space-x-4">
           <button 
             onClick={() => showAlertMessage('Take Payment functionality opened')}
